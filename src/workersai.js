@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import {Context} from './context.js';
 import {ENV} from './env.js';
+import {isEventStreamResponse} from './utils.js';
 import {Stream} from './vendors/stream.js';
 
 /**
@@ -49,7 +50,7 @@ export async function requestCompletionsFromWorkersAI(message, history, context,
   const resp = await run(model, request);
   const controller = new AbortController();
 
-  if (onStream && resp.ok && resp.headers.get('content-type').indexOf('text/event-stream') !== -1) {
+  if (onStream && resp.ok && isEventStreamResponse(resp)) {
     const stream = new Stream(resp, controller);
     let contentFull = '';
     let lengthDelta = 0;
@@ -77,7 +78,14 @@ export async function requestCompletionsFromWorkersAI(message, history, context,
     return contentFull;
   } else {
     const data = await resp.json();
-    return data.result.response;
+    try {
+      return data.result.response;
+    } catch (e) {
+      if (!data) {
+        throw new Error('Empty response');
+      }
+      throw new Error(data?.errors?.[0]?.message || JSON.stringify(data));
+    }
   }
 }
 

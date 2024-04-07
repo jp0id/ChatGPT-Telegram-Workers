@@ -1,20 +1,38 @@
 // src/env.js
 var Environment = class {
+  // -- 版本数据 --
+  //
+  // 当前版本
+  BUILD_TIMESTAMP = 1709018751;
+  // 当前版本 commit id
+  BUILD_VERSION = "8a48d6a";
+  // -- 基础配置 --
   /**
    * @type {I18n | null}
    */
   I18N = null;
+  // 多语言支持
   LANGUAGE = "zh-cn";
-  // AI提供商: auto, openai, azure, workers
+  // 检查更新的分支
+  UPDATE_BRANCH = "master";
+  // AI提供商: auto, openai, azure, workers, gemini, mistral
   AI_PROVIDER = "auto";
+  // -- Telegram 相关 --
+  //
+  // Telegram API Domain
+  TELEGRAM_API_DOMAIN = "https://api.telegram.org";
   // 允许访问的Telegram Token， 设置时以逗号分隔
   TELEGRAM_AVAILABLE_TOKENS = [];
+  // --  权限相关 --
+  //
   // 允许所有人使用
   I_AM_A_GENEROUS_PERSON = false;
   // 白名单
   CHAT_WHITE_LIST = [];
   // 用户配置
   LOCK_USER_CONFIG_KEYS = [];
+  // -- 群组相关 --
+  //
   // 允许访问的Telegram Token 对应的Bot Name， 设置时以逗号分隔
   TELEGRAM_BOT_NAME = [];
   // 群组白名单
@@ -23,10 +41,8 @@ var Environment = class {
   GROUP_CHAT_BOT_ENABLE = true;
   // 群组机器人共享模式,关闭后，一个群组只有一个会话和配置。开启的话群组的每个人都有自己的会话上下文
   GROUP_CHAT_BOT_SHARE_MODE = false;
-  // OpenAI API Key
-  API_KEY = [];
-  // OpenAI的模型名称
-  CHAT_MODEL = "gpt-3.5-turbo";
+  // -- 历史记录相关 --
+  //
   // 为了避免4096字符限制，将消息删减
   AUTO_TRIM_HISTORY = true;
   // 最大历史记录长度
@@ -37,10 +53,24 @@ var Environment = class {
   GPT3_TOKENS_COUNT = false;
   // GPT3计数器资源地址
   GPT3_TOKENS_COUNT_REPO = "https://raw.githubusercontent.com/tbxark-arc/GPT-3-Encoder/master";
+  // -- Prompt 相关 --
+  //
   // 全局默认初始化消息
   SYSTEM_INIT_MESSAGE = null;
   // 全局默认初始化消息角色
   SYSTEM_INIT_MESSAGE_ROLE = "system";
+  // -- Open AI 配置 --
+  //
+  // OpenAI API Key
+  API_KEY = [];
+  // OpenAI的模型名称
+  CHAT_MODEL = "gpt-3.5-turbo";
+  // OpenAI API Domain 可替换兼容openai api的其他服务商
+  OPENAI_API_DOMAIN = "https://api.openai.com";
+  // OpenAI API BASE `https://api.openai.com/v1`
+  OPENAI_API_BASE = null;
+  // -- DALLE 配置 --
+  //
   // DALL-E的模型名称
   DALL_E_MODEL = "dall-e-2";
   // DALL-E图片尺寸
@@ -49,18 +79,18 @@ var Environment = class {
   DALL_E_IMAGE_QUALITY = "standard";
   // DALL-E图片风格
   DALL_E_IMAGE_STYLE = "vivid";
+  // -- 特性开关 --
+  //
   // 是否开启使用统计
   ENABLE_USAGE_STATISTICS = false;
   // 隐藏部分命令按钮
   HIDE_COMMAND_BUTTONS = ["/role"];
   // 显示快捷回复按钮
   SHOW_REPLY_BUTTON = false;
-  // 检查更新的分支
-  UPDATE_BRANCH = "master";
-  // 当前版本
-  BUILD_TIMESTAMP = 1700550928;
-  // 当前版本 commit id
-  BUILD_VERSION = "954408a";
+  // 而外引用消息开关
+  EXTRA_MESSAGE_CONTEXT = false;
+  // -- 模式开关 --
+  //
   // 使用流模式
   STREAM_MODE = true;
   // 安全模式
@@ -69,24 +99,34 @@ var Environment = class {
   DEBUG_MODE = false;
   // 开发模式
   DEV_MODE = false;
-  // Telegram API Domain
-  TELEGRAM_API_DOMAIN = "https://api.telegram.org";
-  // OpenAI API Domain 可替换兼容openai api的其他服务商
-  OPENAI_API_DOMAIN = "https://api.openai.com";
-  // OpenAI API BASE `https://api.openai.com/v1`
-  OPENAI_API_BASE = null;
+  // -- AZURE 配置 --
+  //
   // Azure API Key
   AZURE_API_KEY = null;
   // Azure Completions API
   AZURE_COMPLETIONS_API = null;
+  // Azure DallE API
+  AZURE_DALLE_API = null;
   // Cloudflare Account ID
   CLOUDFLARE_ACCOUNT_ID = null;
   // Cloudflare Token
   CLOUDFLARE_TOKEN = null;
   // Text Generation Model
-  WORKERS_CHAT_MODEL = "@cf/meta/llama-2-7b-chat-fp16";
+  WORKERS_CHAT_MODEL = "@cf/mistral/mistral-7b-instruct-v0.1 ";
   // Text-to-Image Model
   WORKERS_IMAGE_MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0";
+  // Google Gemini API Key
+  GOOGLE_API_KEY = null;
+  // Google Gemini API
+  GOOGLE_COMPLETIONS_API = "https://generativelanguage.googleapis.com/v1beta/models/";
+  // Google Gemini Model
+  GOOGLE_COMPLETIONS_MODEL = "gemini-pro";
+  // mistral api key
+  MISTRAL_API_KEY = null;
+  // mistral api base
+  MISTRAL_COMPLETIONS_API = "https://api.mistral.ai/v1/chat/completions";
+  // mistral api model
+  MISTRAL_CHAT_MODEL = "mistral-tiny";
 };
 var ENV = new Environment();
 var DATABASE = null;
@@ -105,8 +145,11 @@ function initEnv(env, i18n2) {
     OPENAI_API_BASE: "string",
     AZURE_API_KEY: "string",
     AZURE_COMPLETIONS_API: "string",
+    AZURE_DALLE_API: "string",
     CLOUDFLARE_ACCOUNT_ID: "string",
-    CLOUDFLARE_TOKEN: "string"
+    CLOUDFLARE_TOKEN: "string",
+    GOOGLE_API_KEY: "string",
+    MISTRAL_API_KEY: "string"
   };
   const customCommandPrefix = "CUSTOM_COMMAND_";
   for (const key of Object.keys(env)) {
@@ -169,9 +212,12 @@ function initEnv(env, i18n2) {
 }
 
 // src/context.js
-function mergeObject(target, source) {
+function mergeObject(target, source, keys) {
   for (const key of Object.keys(target)) {
     if (source[key]) {
+      if (keys !== null && !keys.includes(key)) {
+        continue;
+      }
       if (typeof source[key] === typeof target[key]) {
         target[key] = source[key];
       }
@@ -181,6 +227,8 @@ function mergeObject(target, source) {
 var Context = class {
   // 用户配置
   USER_CONFIG = {
+    // 自定义的配置的Key
+    DEFINE_KEYS: [],
     // AI提供商
     AI_PROVIDER: ENV.AI_PROVIDER,
     // 聊天模型
@@ -203,12 +251,27 @@ var Context = class {
     AZURE_API_KEY: ENV.AZURE_API_KEY,
     // Azure Completions API
     AZURE_COMPLETIONS_API: ENV.AZURE_COMPLETIONS_API,
+    // Azure DALL-E API
+    AZURE_DALLE_API: ENV.AZURE_DALLE_API,
     // WorkersAI聊天记录模型
     WORKERS_CHAT_MODEL: ENV.WORKERS_CHAT_MODEL,
     // WorkersAI图片模型
-    WORKER_IMAGE_MODEL: ENV.WORKERS_IMAGE_MODEL
+    WORKER_IMAGE_MODEL: ENV.WORKERS_IMAGE_MODEL,
+    // Google Gemini API Key
+    GOOGLE_API_KEY: ENV.GOOGLE_API_KEY,
+    // Google Gemini API
+    GOOGLE_COMPLETIONS_API: ENV.GOOGLE_COMPLETIONS_API,
+    // Google Gemini Model
+    GOOGLE_COMPLETIONS_MODEL: ENV.GOOGLE_COMPLETIONS_MODEL,
+    // mistral api key
+    MISTRAL_API_KEY: ENV.MISTRAL_API_KEY,
+    // mistral api base
+    MISTRAL_COMPLETIONS_API: ENV.MISTRAL_COMPLETIONS_API,
+    // mistral api model
+    MISTRAL_CHAT_MODEL: ENV.MISTRAL_CHAT_MODEL
   };
   USER_DEFINE = {
+    VALID_KEYS: ["OPENAI_API_EXTRA_PARAMS", "SYSTEM_INIT_MESSAGE"],
     // 自定义角色
     ROLE: {}
   };
@@ -247,8 +310,10 @@ var Context = class {
     // 会话 id, private 场景为发言人 id, group/supergroup 场景为群组 id
     speakerId: null,
     // 发言人 id
-    role: null
+    role: null,
     // 角色
+    extraMessageContext: null
+    // 额外消息上下文
   };
   /**
    * @inner
@@ -272,17 +337,19 @@ var Context = class {
   async _initUserConfig(storeKey) {
     try {
       const userConfig = JSON.parse(await DATABASE.get(storeKey));
+      const keys = userConfig?.DEFINE_KEYS || [];
+      this.USER_CONFIG.DEFINE_KEYS = keys;
       const userDefine = "USER_DEFINE";
       if (userConfig[userDefine]) {
-        mergeObject(this.USER_DEFINE, userConfig[userDefine]);
+        mergeObject(this.USER_DEFINE, userConfig[userDefine], this.USER_DEFINE.VALID_KEYS);
         delete userConfig[userDefine];
       }
-      mergeObject(this.USER_CONFIG, userConfig);
+      mergeObject(this.USER_CONFIG, userConfig, keys);
     } catch (e) {
       console.error(e);
     }
     {
-      const aiProvider = new Set("auto,openai,azure,workers".split(","));
+      const aiProvider = new Set("auto,openai,azure,workers,gemini,mistral".split(","));
       if (!aiProvider.has(this.USER_CONFIG.AI_PROVIDER)) {
         this.USER_CONFIG.AI_PROVIDER = "auto";
       }
@@ -857,6 +924,12 @@ async function makeResponse200(resp) {
     });
   }
 }
+function isJsonResponse(resp) {
+  return resp.headers.get("content-type").indexOf("json") !== -1;
+}
+function isEventStreamResponse(resp) {
+  return resp.headers.get("content-type").indexOf("text/event-stream") !== -1;
+}
 
 // src/vendors/stream.js
 var Stream = class {
@@ -1022,8 +1095,8 @@ var LineDecoder = class {
     return lines;
   }
 };
-LineDecoder.NEWLINE_CHARS = /* @__PURE__ */ new Set(["\n", "\r", "\v", "\f", "", "", "", "\x85", "\u2028", "\u2029"]);
-LineDecoder.NEWLINE_REGEXP = /\r\n|[\n\r\x0b\x0c\x1c\x1d\x1e\x85\u2028\u2029]/g;
+LineDecoder.NEWLINE_CHARS = /* @__PURE__ */ new Set(["\n", "\r"]);
+LineDecoder.NEWLINE_REGEXP = /\r\n|[\n\r]/g;
 function partition(str, delimiter) {
   const index = str.indexOf(delimiter);
   if (index !== -1) {
@@ -1049,49 +1122,57 @@ function isOpenAIEnable(context) {
   return context.USER_CONFIG.OPENAI_API_KEY || ENV.API_KEY.length > 0;
 }
 function isAzureEnable(context) {
-  const api = context.USER_CONFIG.AZURE_COMPLETIONS_API || ENV.AZURE_COMPLETIONS_API;
   const key = context.USER_CONFIG.AZURE_API_KEY || ENV.AZURE_API_KEY;
-  return api !== null && key !== null;
+  return key !== null;
 }
 async function requestCompletionsFromOpenAI(message, history, context, onStream) {
+  const url = `${ENV.OPENAI_API_BASE}/chat/completions`;
   const body = {
     model: context.USER_CONFIG.CHAT_MODEL,
     ...context.USER_CONFIG.OPENAI_API_EXTRA_PARAMS,
     messages: [...history || [], { role: "user", content: message }],
     stream: onStream != null
   };
-  const controller = new AbortController();
-  const { signal } = controller;
-  const timeout = 1e3 * 60 * 5;
-  setTimeout(() => controller.abort(), timeout);
-  let url = `${ENV.OPENAI_API_BASE}/chat/completions`;
   const header = {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${openAIKeyFromContext(context)}`
   };
-  {
-    const provider = context.USER_CONFIG.AI_PROVIDER;
-    if (provider === "azure" || provider === "auto" && isAzureEnable(context)) {
-      url = ENV.AZURE_COMPLETIONS_API;
-      header["api-key"] = azureKeyFromContext(context);
-      delete header["Authorization"];
-      delete body.model;
-    }
-  }
+  return requestCompletionsFromOpenAILikes(url, header, body, context, onStream, (result) => {
+    setTimeout(() => updateBotUsage(result?.usage, context).catch(console.error), 0);
+  });
+}
+async function requestCompletionsFromAzureOpenAI(message, history, context, onStream) {
+  const url = context.USER_CONFIG.AZURE_COMPLETIONS_API;
+  const body = {
+    ...context.USER_CONFIG.OPENAI_API_EXTRA_PARAMS,
+    messages: [...history || [], { role: "user", content: message }],
+    stream: onStream != null
+  };
+  const header = {
+    "Content-Type": "application/json",
+    "api-key": azureKeyFromContext(context)
+  };
+  return requestCompletionsFromOpenAILikes(url, header, body, context, onStream);
+}
+async function requestCompletionsFromOpenAILikes(url, header, body, context, onStream, onResult = null) {
+  const controller = new AbortController();
+  const { signal } = controller;
+  const timeout = 1e3 * 60 * 5;
+  setTimeout(() => controller.abort(), timeout);
   const resp = await fetch(url, {
     method: "POST",
     headers: header,
     body: JSON.stringify(body),
     signal
   });
-  if (onStream && resp.ok && resp.headers.get("content-type").indexOf("text/event-stream") !== -1) {
+  if (onStream && resp.ok && isEventStreamResponse(resp)) {
     const stream = new Stream(resp, controller);
     let contentFull = "";
     let lengthDelta = 0;
     let updateStep = 20;
     try {
       for await (const data of stream) {
-        const c = data.choices[0].delta?.content || "";
+        const c = data?.choices?.[0]?.delta?.content || "";
         lengthDelta += c.length;
         contentFull = contentFull + c;
         if (lengthDelta > updateStep) {
@@ -1107,22 +1188,29 @@ ERROR: ${e.message}`;
     }
     return contentFull;
   }
-  const result = await resp.json();
-  if (result.error?.message) {
-    if (ENV.DEBUG_MODE || ENV.DEV_MODE) {
-      throw new Error(`OpenAI API Error
-> ${result.error.message}
-Body: ${JSON.stringify(body)}`);
-    } else {
-      throw new Error(`OpenAI API Error
-> ${result.error.message}`);
-    }
+  if (!isJsonResponse(resp)) {
+    throw new Error(resp.statusText);
   }
-  setTimeout(() => updateBotUsage(result.usage, context).catch(console.error), 0);
-  return result.choices[0].message.content;
+  const result = await resp.json();
+  if (!result) {
+    throw new Error("Empty response");
+  }
+  if (result.error?.message) {
+    throw new Error(result.error.message);
+  }
+  try {
+    onResult?.(result);
+    return result.choices[0].message.content;
+  } catch (e) {
+    throw Error(result?.error?.message || JSON.stringify(result));
+  }
 }
 async function requestImageFromOpenAI(prompt, context) {
-  const key = openAIKeyFromContext(context);
+  let url = `${ENV.OPENAI_API_BASE}/images/generations`;
+  const header = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${openAIKeyFromContext(context)}`
+  };
   const body = {
     prompt,
     n: 1,
@@ -1133,17 +1221,37 @@ async function requestImageFromOpenAI(prompt, context) {
     body.quality = context.USER_CONFIG.DALL_E_IMAGE_QUALITY;
     body.style = context.USER_CONFIG.DALL_E_IMAGE_STYLE;
   }
-  const resp = await fetch(`${ENV.OPENAI_API_BASE}/images/generations`, {
+  {
+    const provider = context.USER_CONFIG.AI_PROVIDER;
+    let isAzureModel = false;
+    switch (provider) {
+      case "azure":
+        isAzureModel = true;
+        break;
+      case "auto":
+        isAzureModel = isAzureEnable(context) && context.USER_CONFIG.AZURE_DALLE_API !== null;
+        break;
+      default:
+        break;
+    }
+    if (isAzureModel) {
+      url = context.USER_CONFIG.AZURE_DALLE_API;
+      const validSize = ["1792x1024", "1024x1024", "1024x1792"];
+      if (!validSize.includes(body.size)) {
+        body.size = "1024x1024";
+      }
+      header["api-key"] = azureKeyFromContext(context);
+      delete header["Authorization"];
+      delete body.model;
+    }
+  }
+  const resp = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${key}`
-    },
+    headers: header,
     body: JSON.stringify(body)
   }).then((res) => res.json());
   if (resp.error?.message) {
-    throw new Error(`OpenAI API Error
-> ${resp.error.message}`);
+    throw new Error(resp.error.message);
   }
   return resp.data[0].url;
 }
@@ -1169,7 +1277,7 @@ async function updateBotUsage(usage, context) {
   await DATABASE.put(context.SHARE_CONTEXT.usageKey, JSON.stringify(dbValue));
 }
 
-// src/workers-ai.js
+// src/workersai.js
 async function run(model, body) {
   const id = ENV.CLOUDFLARE_ACCOUNT_ID;
   const token = ENV.CLOUDFLARE_TOKEN;
@@ -1193,7 +1301,7 @@ async function requestCompletionsFromWorkersAI(message, history, context, onStre
   };
   const resp = await run(model, request);
   const controller = new AbortController();
-  if (onStream && resp.ok && resp.headers.get("content-type").indexOf("text/event-stream") !== -1) {
+  if (onStream && resp.ok && isEventStreamResponse(resp)) {
     const stream = new Stream(resp, controller);
     let contentFull = "";
     let lengthDelta = 0;
@@ -1221,12 +1329,92 @@ ${ENV.I18N.message.loading}...`);
     return contentFull;
   } else {
     const data = await resp.json();
-    return data.result.response;
+    try {
+      return data.result.response;
+    } catch (e) {
+      if (!data) {
+        throw new Error("Empty response");
+      }
+      throw new Error(data?.errors?.[0]?.message || JSON.stringify(data));
+    }
   }
 }
 async function requestImageFromWorkersAI(prompt, context) {
   const raw = await run(ENV.WORKERS_IMAGE_MODEL, { prompt });
   return await raw.blob();
+}
+
+// src/gemini.js
+function isGeminiAIEnable(context) {
+  return !!context.USER_CONFIG.GOOGLE_API_KEY;
+}
+async function requestCompletionsFromGeminiAI(message, history, context, onStream) {
+  const url = `${context.USER_CONFIG.GOOGLE_COMPLETIONS_API}${context.USER_CONFIG.GOOGLE_COMPLETIONS_MODEL}:${// 暂时不支持stream模式
+  // onStream ? 'streamGenerateContent' : 'generateContent'
+  "generateContent"}?key=${context.USER_CONFIG.GOOGLE_API_KEY}`;
+  const contentsTemp = [...history || [], { role: "user", content: message }];
+  const contents = [];
+  for (const msg of contentsTemp) {
+    switch (msg.role) {
+      case "assistant":
+        msg.role = "model";
+        break;
+      case "system":
+      case "user":
+        msg.role = "user";
+        break;
+      default:
+        continue;
+    }
+    if (contents.length === 0 || contents[contents.length - 1].role !== msg.role) {
+      contents.push({
+        "role": msg.role,
+        "parts": [
+          {
+            "text": msg.content
+          }
+        ]
+      });
+    } else {
+      contents[contents.length - 1].parts[0].text += msg.content;
+    }
+  }
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "User-Agent": CONST.USER_AGENT
+    },
+    body: JSON.stringify({ contents })
+  });
+  const data = await resp.json();
+  try {
+    return data.candidates[0].content.parts[0].text;
+  } catch (e) {
+    if (!data) {
+      throw new Error("Empty response");
+    }
+    throw new Error(data?.error?.message || JSON.stringify(data));
+  }
+}
+
+// src/mistralai.js
+function isMistralAIEnable(context) {
+  return !!(context.USER_CONFIG.MISTRAL_API_KEY && context.USER_CONFIG.MISTRAL_COMPLETIONS_API && context.USER_CONFIG.MISTRAL_CHAT_MODEL);
+}
+async function requestCompletionsFromMistralAI(message, history, context, onStream) {
+  const url = context.USER_CONFIG.MISTRAL_COMPLETIONS_API;
+  const body = {
+    model: context.USER_CONFIG.MISTRAL_CHAT_MODEL,
+    ...context.USER_CONFIG.OPENAI_API_EXTRA_PARAMS,
+    messages: [...history || [], { role: "user", content: message }],
+    stream: onStream != null
+  };
+  const header = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${context.USER_CONFIG.MISTRAL_API_KEY}`
+  };
+  return requestCompletionsFromOpenAILikes(url, header, body, context, onStream);
 }
 
 // src/llm.js
@@ -1297,16 +1485,30 @@ async function loadHistory(key, context) {
 function loadChatLLM(context) {
   switch (context.USER_CONFIG.AI_PROVIDER) {
     case "openai":
-    case "azure":
       return requestCompletionsFromOpenAI;
+    case "azure":
+      return requestCompletionsFromAzureOpenAI;
     case "workers":
       return requestCompletionsFromWorkersAI;
+    case "gemini":
+      return requestCompletionsFromGeminiAI;
+    case "mistral":
+      return requestCompletionsFromMistralAI;
     default:
-      if (isOpenAIEnable(context) || isAzureEnable(context)) {
+      if (isAzureEnable(context)) {
+        return requestCompletionsFromAzureOpenAI;
+      }
+      if (isOpenAIEnable(context)) {
         return requestCompletionsFromOpenAI;
       }
       if (isWorkersAIEnable(context)) {
         return requestCompletionsFromWorkersAI;
+      }
+      if (isGeminiAIEnable(context)) {
+        return requestCompletionsFromGeminiAI;
+      }
+      if (isMistralAIEnable(context)) {
+        return requestCompletionsFromMistralAI;
       }
       return null;
   }
@@ -1316,11 +1518,11 @@ function loadImageGen(context) {
     case "openai":
       return requestImageFromOpenAI;
     case "azure":
-      return null;
+      return requestImageFromOpenAI;
     case "workers":
       return requestImageFromWorkersAI;
     default:
-      if (isOpenAIEnable(context)) {
+      if (isOpenAIEnable(context) || isAzureEnable(context)) {
         return requestImageFromOpenAI;
       }
       if (isWorkersAIEnable(context)) {
@@ -1394,7 +1596,12 @@ async function chatWithLLM(text, context, modifier) {
     }
     return sendMessageToTelegramWithContext(context)(answer);
   } catch (e) {
-    return sendMessageToTelegramWithContext(context)(`Error: ${e.message}`);
+    let errMsg = `Error: ${e.message}`;
+    if (errMsg.length > 2048) {
+      errMsg = errMsg.substring(0, 2048);
+    }
+    context.CURRENT_CHAT_CONTEXT.disable_web_page_preview = true;
+    return sendMessageToTelegramWithContext(context)(errMsg);
   }
 }
 
@@ -1466,6 +1673,11 @@ var commandHandlers = {
   "/delenv": {
     scopes: [],
     fn: commandDeleteUserConfig,
+    needAuth: commandAuthCheck.shareModeGroup
+  },
+  "/clearenv": {
+    scopes: [],
+    fn: commandClearUserConfig,
     needAuth: commandAuthCheck.shareModeGroup
   },
   "/usage": {
@@ -1600,9 +1812,12 @@ async function commandUpdateUserConfig(message, command, subcommand, context) {
   const key = subcommand.slice(0, kv);
   const value = subcommand.slice(kv + 1);
   if (ENV.LOCK_USER_CONFIG_KEYS.includes(key)) {
-    return sendMessageToTelegramWithContext(context)(ENV.I18N.command.setenv.update_config_error(new Error(`Key ${key} is locked`)));
+    const msg = ENV.I18N.command.setenv.update_config_error(new Error(`Key ${key} is locked`));
+    return sendMessageToTelegramWithContext(context)(msg);
   }
   try {
+    context.USER_CONFIG.DEFINE_KEYS.push(key);
+    context.USER_CONFIG.DEFINE_KEYS = Array.from(new Set(context.USER_CONFIG.DEFINE_KEYS));
     mergeConfig(context.USER_CONFIG, key, value);
     await DATABASE.put(
       context.SHARE_CONTEXT.configStoreKey,
@@ -1619,11 +1834,14 @@ async function commandUpdateUserConfigs(message, command, subcommand, context) {
     for (const ent of Object.entries(values)) {
       const [key, value] = ent;
       if (ENV.LOCK_USER_CONFIG_KEYS.includes(key)) {
-        continue;
+        const msg = ENV.I18N.command.setenv.update_config_error(new Error(`Key ${key} is locked`));
+        return sendMessageToTelegramWithContext(context)(msg);
       }
+      context.USER_CONFIG.DEFINE_KEYS.push(key);
       mergeConfig(context.USER_CONFIG, key, value);
       console.log(JSON.stringify(context.USER_CONFIG));
     }
+    context.USER_CONFIG.DEFINE_KEYS = Array.from(new Set(context.USER_CONFIG.DEFINE_KEYS));
     await DATABASE.put(
       context.SHARE_CONTEXT.configStoreKey,
       JSON.stringify(context.USER_CONFIG)
@@ -1635,13 +1853,32 @@ async function commandUpdateUserConfigs(message, command, subcommand, context) {
 }
 async function commandDeleteUserConfig(message, command, subcommand, context) {
   if (ENV.LOCK_USER_CONFIG_KEYS.includes(subcommand)) {
-    return sendMessageToTelegramWithContext(context)(ENV.I18N.command.setenv.update_config_error(new Error(`Key ${subcommand} is locked`)));
+    const msg = ENV.I18N.command.setenv.update_config_error(new Error(`Key ${subcommand} is locked`));
+    return sendMessageToTelegramWithContext(context)(msg);
   }
   try {
     context.USER_CONFIG[subcommand] = null;
+    context.USER_CONFIG.DEFINE_KEYS = context.USER_CONFIG.DEFINE_KEYS.filter((key) => key !== subcommand);
     await DATABASE.put(
       context.SHARE_CONTEXT.configStoreKey,
       JSON.stringify(context.USER_CONFIG)
+    );
+    return sendMessageToTelegramWithContext(context)(ENV.I18N.command.setenv.update_config_success);
+  } catch (e) {
+    return sendMessageToTelegramWithContext(context)(ENV.I18N.command.setenv.update_config_error(e));
+  }
+}
+async function commandClearUserConfig(message, command, subcommand, context) {
+  if (ENV.LOCK_USER_CONFIG_KEYS.includes(subcommand)) {
+    const msg = ENV.I18N.command.setenv.update_config_error(new Error(`Key ${subcommand} is locked`));
+    return sendMessageToTelegramWithContext(context)(msg);
+  }
+  try {
+    context.USER_CONFIG.DEFINE_KEYS = [];
+    context.USER_CONFIG[subcommand] = null;
+    await DATABASE.put(
+      context.SHARE_CONTEXT.configStoreKey,
+      JSON.stringify({})
     );
     return sendMessageToTelegramWithContext(context)(ENV.I18N.command.setenv.update_config_success);
   } catch (e) {
@@ -1705,6 +1942,9 @@ async function commandSystem(message, command, subcommand, context) {
     context.USER_CONFIG.OPENAI_API_KEY = "******";
     context.USER_CONFIG.AZURE_API_KEY = "******";
     context.USER_CONFIG.AZURE_COMPLETIONS_API = "******";
+    context.USER_CONFIG.AZURE_DALLE_API = "******";
+    context.USER_CONFIG.GOOGLE_API_KEY = "******";
+    context.USER_CONFIG.MISTRAL_API_KEY = "******";
     msg = "<pre>\n" + msg;
     msg += `USER_CONFIG: ${JSON.stringify(context.USER_CONFIG, null, 2)}
 `;
@@ -1923,18 +2163,20 @@ async function msgHandleGroupMessage(message, context) {
     return new Response("Non text message", { status: 200 });
   }
   let botName = context.SHARE_CONTEXT.currentBotName;
+  if (message.reply_to_message) {
+    if (`${message.reply_to_message.from.id}` === context.SHARE_CONTEXT.currentBotId) {
+      return null;
+    } else if (ENV.EXTRA_MESSAGE_CONTEXT) {
+      context.SHARE_CONTEXT.extraMessageContext = message.reply_to_message;
+    }
+  }
   if (!botName) {
     const res = await getBot(context.SHARE_CONTEXT.currentBotToken);
-    context.SHARE_CONTEXT.currentBotName = res.info.name;
-    botName = res.info.name;
+    context.SHARE_CONTEXT.currentBotName = res.info.bot_name;
+    botName = res.info.bot_name;
   }
   if (botName) {
     let mentioned = false;
-    if (message.reply_to_message) {
-      if (message.reply_to_message.from.username === botName) {
-        mentioned = true;
-      }
-    }
     if (message.entities) {
       let content = "";
       let offset = 0;
@@ -2010,7 +2252,11 @@ async function msgHandleRole(message, context) {
   }
 }
 async function msgChatWithLLM(message, context) {
-  return chatWithLLM(message.text, context, null);
+  let text = message.text;
+  if (ENV.EXTRA_MESSAGE_CONTEXT && context.SHARE_CONTEXT.extraMessageContext && context.SHARE_CONTEXT.extraMessageContext.text) {
+    text = context.SHARE_CONTEXT.extraMessageContext.text + "\n" + text;
+  }
+  return chatWithLLM(text, context, null);
 }
 async function msgProcessByChatType(message, context) {
   const handlerMap = {
@@ -2293,6 +2539,7 @@ var zh_hans_default = {
       "version": "\u83B7\u53D6\u5F53\u524D\u7248\u672C\u53F7, \u5224\u65AD\u662F\u5426\u9700\u8981\u66F4\u65B0",
       "setenv": "\u8BBE\u7F6E\u7528\u6237\u914D\u7F6E\uFF0C\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /setenv KEY=VALUE",
       "delenv": "\u5220\u9664\u7528\u6237\u914D\u7F6E\uFF0C\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /delenv KEY",
+      "clearenv": "\u6E05\u9664\u6240\u6709\u7528\u6237\u914D\u7F6E",
       "usage": "\u83B7\u53D6\u5F53\u524D\u673A\u5668\u4EBA\u7684\u7528\u91CF\u7EDF\u8BA1",
       "system": "\u67E5\u770B\u5F53\u524D\u4E00\u4E9B\u7CFB\u7EDF\u4FE1\u606F",
       "role": "\u8BBE\u7F6E\u9884\u8BBE\u7684\u8EAB\u4EFD",
@@ -2376,6 +2623,7 @@ var zh_hant_default = {
       "version": "\u7372\u53D6\u7576\u524D\u7248\u672C\u865F\u78BA\u8A8D\u662F\u5426\u9700\u8981\u66F4\u65B0",
       "setenv": "\u8A2D\u7F6E\u7528\u6236\u914D\u7F6E\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/setenv KEY=VALUE",
       "delenv": "\u522A\u9664\u7528\u6236\u914D\u7F6E\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/delenv KEY",
+      "clearenv": "\u6E05\u9664\u6240\u6709\u7528\u6236\u914D\u7F6E",
       "usage": "\u7372\u53D6\u6A5F\u5668\u4EBA\u7576\u524D\u7684\u4F7F\u7528\u60C5\u6CC1\u7D71\u8A08",
       "system": "\u67E5\u770B\u4E00\u4E9B\u7CFB\u7D71\u4FE1\u606F",
       "role": "\u8A2D\u7F6E\u9810\u8A2D\u8EAB\u4EFD",
@@ -2459,6 +2707,7 @@ var en_default = {
       "version": "Get the current version number to determine whether to update",
       "setenv": "Set user configuration, the complete command format is /setenv KEY=VALUE",
       "delenv": "Delete user configuration, the complete command format is /delenv KEY",
+      "clearenv": "Clear all user configuration",
       "usage": "Get the current usage statistics of the robot",
       "system": "View some system information",
       "role": "Set the preset identity",

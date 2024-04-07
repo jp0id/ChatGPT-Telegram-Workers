@@ -6,10 +6,14 @@ import './type.js';
 /**
  * @param {object} target - The target object.
  * @param {object} source - The source object.
+ * @param {Array<string>} keys - The keys to merge.
  */
-function mergeObject(target, source) {
+function mergeObject(target, source, keys) {
   for (const key of Object.keys(target)) {
     if (source[key]) {
+      if (keys !== null && !keys.includes(key)) {
+        continue;
+      }
       if (typeof source[key] === typeof target[key]) {
         target[key] = source[key];
       }
@@ -23,6 +27,9 @@ function mergeObject(target, source) {
 export class Context {
   // 用户配置
   USER_CONFIG = {
+    // 自定义的配置的Key
+    DEFINE_KEYS: [],
+
     // AI提供商
     AI_PROVIDER: ENV.AI_PROVIDER,
 
@@ -48,14 +55,33 @@ export class Context {
     AZURE_API_KEY: ENV.AZURE_API_KEY,
     // Azure Completions API
     AZURE_COMPLETIONS_API: ENV.AZURE_COMPLETIONS_API,
+    // Azure DALL-E API
+    AZURE_DALLE_API: ENV.AZURE_DALLE_API,
 
     // WorkersAI聊天记录模型
     WORKERS_CHAT_MODEL: ENV.WORKERS_CHAT_MODEL,
     // WorkersAI图片模型
     WORKER_IMAGE_MODEL: ENV.WORKERS_IMAGE_MODEL,
+
+
+    // Google Gemini API Key
+    GOOGLE_API_KEY: ENV.GOOGLE_API_KEY,
+    // Google Gemini API
+    GOOGLE_COMPLETIONS_API: ENV.GOOGLE_COMPLETIONS_API,
+    // Google Gemini Model
+    GOOGLE_COMPLETIONS_MODEL: ENV.GOOGLE_COMPLETIONS_MODEL,
+
+
+    // mistral api key
+    MISTRAL_API_KEY: ENV.MISTRAL_API_KEY,
+    // mistral api base
+    MISTRAL_COMPLETIONS_API: ENV.MISTRAL_COMPLETIONS_API,
+    // mistral api model
+    MISTRAL_CHAT_MODEL: ENV.MISTRAL_CHAT_MODEL,
   };
 
   USER_DEFINE = {
+    VALID_KEYS: ['OPENAI_API_EXTRA_PARAMS', 'SYSTEM_INIT_MESSAGE'],
     // 自定义角色
     ROLE: {},
   };
@@ -83,6 +109,7 @@ export class Context {
     chatId: null, // 会话 id, private 场景为发言人 id, group/supergroup 场景为群组 id
     speakerId: null, // 发言人 id
     role: null, // 角色
+    extraMessageContext: null, // 额外消息上下文
   };
 
   /**
@@ -108,17 +135,19 @@ export class Context {
   async _initUserConfig(storeKey) {
     try {
       const userConfig = JSON.parse(await DATABASE.get(storeKey));
+      const keys = userConfig?.DEFINE_KEYS || [];
+      this.USER_CONFIG.DEFINE_KEYS = keys;
       const userDefine = 'USER_DEFINE';
       if (userConfig[userDefine]) {
-        mergeObject(this.USER_DEFINE, userConfig[userDefine]);
+        mergeObject(this.USER_DEFINE, userConfig[userDefine], this.USER_DEFINE.VALID_KEYS);
         delete userConfig[userDefine];
       }
-      mergeObject(this.USER_CONFIG, userConfig);
+      mergeObject(this.USER_CONFIG, userConfig, keys);
     } catch (e) {
       console.error(e);
     }
     {
-      const aiProvider = new Set('auto,openai,azure,workers'.split(','));
+      const aiProvider = new Set('auto,openai,azure,workers,gemini,mistral'.split(','));
       if (!aiProvider.has(this.USER_CONFIG.AI_PROVIDER)) {
         this.USER_CONFIG.AI_PROVIDER = 'auto';
       }
