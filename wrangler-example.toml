@@ -3,6 +3,7 @@ name = 'chatgpt-telegram-workers'
 compatibility_date = '2023-10-07'
 main = './dist/index.js'
 workers_dev = true
+compatibility_flags = [ "nodejs_compat" ]
 
 # 这里的 id 为必填项 请填写你的 kv namespace id
 # preview_id 只在调试时使用，不需要请删除
@@ -104,7 +105,7 @@ AI_IMAGE_PROVIDER = 'auto'
 # OpenAI API Key
 OPENAI_API_KEY = 'SK-1,SK-2'
 ## OpenAI的模型名称
-#OPENAI_CHAT_MODEL = 'gpt-3.5-turbo'
+#OPENAI_CHAT_MODEL = 'gpt-4o-mini'
 ## OpenAI API BASE ``
 #OPENAI_API_BASE = 'https://api.openai.com/v1'
 ## OpenAI API Extra Params
@@ -190,3 +191,9 @@ COMMAND_DESCRIPTION_openai = 'Switch to OpenAI AI provider'
 
 CUSTOM_COMMAND_cn2en = '/setenvs {"SYSTEM_INIT_MESSAGE": "You are a translator. Please translate everything I say below into English."}'
 COMMAND_DESCRIPTION_cn2en = 'Switch to Chinese to English translation mode'
+
+PLUGIN_COMMAND_dns = "https://raw.githubusercontent.com/TBXark/ChatGPT-Telegram-Workers/dev/plugins/dns.json"
+PLUGIN_DESCRIPTION_dns = "DNS查询 /dns <类型> <域名>"
+
+PLUGIN_COMMAND_dicten = "https://raw.githubusercontent.com/TBXark/ChatGPT-Telegram-Workers/dev/plugins/dicten.json"
+PLUGIN_DESCRIPTION_dicten = "英文字典 /dicten <单词>"
